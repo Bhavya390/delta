@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="1000" height="500" style="border:1px solid #d3d3d3;"></canvas>
+<p id="demo"></p>
+<script>
+
+window.addEventListener("load", windowLoadHandler, false);
+
+function windowLoadHandler() {
+	canvasApp();
+}
+var x=20;
+var y=20;
+var x1=20;
+var mouse = {x: 320, y: 100};
+var last_mouse = {x: 320, y: 100};
+var counter = 0;
+
+
+
+ function canvasApp()
+ {
+ var c=document.getElementById("myCanvas");
+var ctx=c.getContext("2d");
+var Sheet = new Image();
+
+
+init();
+function init() {
+		//screen();
+		draw();	
+		//c.addEventListener("click", beginProjection, false);
+		c.addEventListener("mousemove", mouseMoveListener, false);
+       // paint();
+	   Sheet.addEventListener('load', eventSheetLoaded , false);
+       Sheet.src = "images.jpg";
+	}
+	
+	function eventSheetLoaded() {
+      startUp();
+   }
+
+   function drawScreen() {
+
+       //draw a background so we can see the Canvas edges
+       ctx.fillStyle = "#aaaaaa";
+       ctx.fillRect(0,0,c.width,c.height);
+       ctx.drawImage(Sheet, 40*counter, 0,320,320,320,50,c.width-20,c.height);
+         counter++;
+         if (counter >1) {
+            counter = 0;
+         }
+   }
+
+function startUp(){
+   gameLoop();
+}
+
+function gameLoop() {
+    window.setTimeout(gameLoop, 500);
+    drawScreen();
+}
+function mouseMoveListener(event)
+ { // init();
+    linestart();
+   // paint();
+		// getting mouse position correctly 
+   last_mouse.x=mouse.x;
+   last_mouse.y=mouse.y;
+  
+
+   mouse.x=event.pageX - this.offsetLeft;
+   mouse.y=event.pageY - this.offsetTop;
+	
+	
+	}
+	
+  
+function paint()
+{
+  	//clearcanvas();
+if((!(last_mouse.x>1000))&&(!(last_mouse.x<320)))//to prevent mouse to move out of image in x-direction
+{	
+  ctx.beginPath();
+  ctx.moveTo(last_mouse.x,last_mouse.y);
+  ctx.lineTo(mouse.x,mouse.y);
+ // ctx.closePath();
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = 'green';
+  ctx.stroke();
+  }
+  else
+  {
+  last_mouse.x=last_mouse.x-c.width;
+  }
+ }
+function linestart()
+{
+  linemove();
+  }
+  function linemove()
+  {
+    window.setTimeout(linemove, 500);
+    paint();
+	}
+/*function screen()
+{
+    ctx.fillStyle = "red";
+	ctx.fillRect(0,0,c.width,c.height);
+	ctx.fill();
+}	
+function screen2()
+{
+  ctx.fillStyle="yellow";
+  ctx.fillRect(0,0,c.width,c.height);
+  ctx.fill();
+ screen();
+}
+setInterval(screen2,200);  */
+function clearcanvas()
+{
+  ctx.clearRect(0,0,c.width,c.height);
+  draw();
+  }
+function draw()
+{
+  
+  ctx.fillStyle = "yellow";
+  ctx.beginPath();
+  ctx.fillRect(mouse.x,mouse.y,20,20);
+  ctx.closePath();
+  ctx.fill();
+}
+function move()
+{
+  //clearcanvas();
+  draw();
+   last_mouse.x=mouse.x;
+   last_mouse.y=mouse.y;
+  
+  mouse.x=event.clientX;//pageX - this.offsetLeft;
+  mouse.y=event.clientY;
+  //x=x+x1;
+  //if(x>450)
+  //x=x-450;
+  if(mouse.x>c.width)
+  mouse.x=mouse.x-c.width;
+  }
+  
+  
+//setInterval(draw,1000);
+
+function mouseDownListener(event) {
+
+
+	}
+	
+	function mouseUpListener(event) {
+
+		
+	}
+	
+
+
+  
+  //setInterval(paint,100);
+}
+
+		
+		
+</script> 
+
+</body>
+</html>
+
