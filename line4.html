@@ -12,28 +12,24 @@ function windowLoadHandler() {
 }
 var x=20;
 var y=20;
-var x1=20;
-var mouse = {x: 320, y: 100};
-var last_mouse = {x: 320, y: 100};
-var counter = 0;
-var fromX = 320;
-var fromY = 80;
-var toX   = 400;
-var toY   = 80;
-var cp1X   = 450;
-var cp1Y   = 50;
-var cp2X   = 350;
-var cp2Y   = 100;
+//var x1=20;
 var dx=2;
 var dr=2;
 var du=2;
 var x1 = 10;
  var y1 = 220;
+ var x2=x1;
  var mx = 0;
  var my = 0;
  var vx= 0,vy= 1;
 gravity = 0.2,	bounceFactor = 0.7;           
  var i=10;           
+var a=[[400,220],[580,180],[700,220],[900,220]];
+ var j=0;
+ var k=0;
+ var score=0;
+var tol=0;
+var w=1;
 
 
 
@@ -41,23 +37,15 @@ gravity = 0.2,	bounceFactor = 0.7;
  {
  var c=document.getElementById("myCanvas");
 var ctx=c.getContext("2d");
-//var Sheet = new Image();
 c.addEventListener("keydown", keydownControl, false);
 
 init();
 function init() {
-		//screen();
+		
 		draw();
 		drawrect();
-		//docReady();
-		//c.addEventListener("click", beginProjection, false);
-		//c.addEventListener("keydown", keydownControl, false);
 		call();
-       // paint();
-	   //drawrect();
-	  // window.onkeydown = keydownControl;
-	//   Sheet.addEventListener('load', eventSheetLoaded , false);
-     //  Sheet.src = "images.jpg";
+      
 	}
 	
 	function clearCanvas() {
@@ -67,59 +55,52 @@ function init() {
 	
 	
 }
-	/*function eventSheetLoaded() {
-      startUp();
-   }
-function drawScreen() {
-
-       //draw a background so we can see the Canvas edges
-       ctx.fillStyle = "#aaaaaa";
-       ctx.fillRect(0,0,c.width,c.height);
-       ctx.drawImage(Sheet, 40*counter, 0,320,320,320,50,c.width-20,c.height);
-         counter++;
-         if (counter >1) {
-            counter = 0;
-         }
-   }
-
-function startUp(){
-   gameLoop();
-}
-
-function gameLoop() {
-    window.setTimeout(gameLoop, 1000);
-    drawScreen();
-}*/
+	var h=0;
 
 function drawrect()
 {
-  ctx.fillStyle = "yellow";
+  
+  if(x1+mx < c.width-300 )
+  {
+  for(i=0;i<4;i++)
+  {
+   
+    for(j=0;j<1;j++)
+	{
+	ctx.fillStyle = "yellow";
   ctx.beginPath();
-  ctx.fillRect(400+i,220,20,20);
+  ctx.fillRect(a[i][j]-k,a[i][j+1],20,20);
   ctx.closePath();
   ctx.fill();
+ k=k+0.1;
+ h=k;
+ 
+  }
   
-  
-  
-  ctx.fillStyle = "yellow";
-  ctx.beginPath();
-  ctx.fillRect(580+i,180,20,20);
-  ctx.closePath();
-  ctx.fill();
-  
-  ctx.fillStyle = "yellow";
-  ctx.beginPath();
-  ctx.fillRect(700+i,220,20,20);
-  ctx.closePath();
-  ctx.fill();
-  
-  ctx.fillStyle = "yellow";
-  ctx.beginPath();
-  ctx.fillRect(900+i,220,20,20);
-  ctx.closePath();
-  ctx.fill();
-  i=i-0.2;
+ 
+  }
 }
+
+else
+{
+//x1=10;
+for(i=0;i<4;i++)
+  {
+   
+    for(j=0;j<1;j++)
+	{
+	ctx.fillStyle = "yellow";
+  ctx.beginPath();
+  ctx.fillRect(a[i][j]+k,a[i][j+1],20,20);
+  ctx.closePath();
+  ctx.fill();
+ k=k-0.1;
+ 
+  }
+
+}
+ }
+ }
 setInterval(drawrect,10);
  
    
@@ -146,40 +127,17 @@ ctx.closePath();
 ctx.fill();
 //ctx.beginPath();
 }
-//setInterval(draw,100);
+
  
   function mess()
   {
    ctx.beginPath();
-   ctx.font="20px Georgia";
-	 //alert("hi"); 
-  ctx.fillText("GAME OVER",400,300);
-  //mx=0;
-  //my=0;
+   ctx.font="20px Georgia"; 
+   ctx.fillText("GAME OVER",400,300);
    call();
    c.removeEventListener('keydown', keydownControl);
-  
-  
   }
-      function fall(){
-	 
-	 
-		clearCanvas();
-		draw();
-		
-		// Now, lets make the ball move by adding the velocity vectors to its position
-		y1 += vy;
-		// Ohh! The ball is moving!
-		// Lets add some acceleration
-		vy += gravity;
-		//Perfect! Now, lets make it rebound when it touches the floor
-		if(y1 + 10 <100 && y1+10 >230) {
-			// First, reposition the ball on top of the floor and then bounce it!
-			y1 = 90;
-			//vy *= -bounceFactor;
-			// The bounceFactor variable that we created decides the elasticity or how elastic the collision will be. If it's 1, then the collision will be perfectly elastic. If 0, then it will be inelastic.
-		}	   
-	}
+      
                     
                           
                         function drawrec() {
@@ -193,17 +151,9 @@ ctx.fill();
 								if(y1+mx<100 || y1+mx>230)
 								mess();
 								
-								
-								
 								x1 += mx;
                                 y1 += my;
 								
-								
-								//if(x1+mx==400 || y1+my==230)
-                                //mess();								
-								//if(x1+mx==400 && y1+my<220)
-								//mess();
-                          
                           
                           
                         }
@@ -211,7 +161,7 @@ ctx.fill();
 						{
 						  clearCanvas();
                           draw();
-						 x1+=mx;
+						 //x1+=mx;
 						 y1=y1+my;
 						 
 						 my += gravity;
@@ -226,14 +176,11 @@ ctx.fill();
 						  setInterval(jump,100);
 						  }
                         function keydownControl(e) {
-                                /*if(e.keyCode==37) {
-                                        mx = -2;
-                                        my = 0;
-                                } else*/
+                                
                                 if (e.keyCode==38) {
                                         mx = 0;
                                         my = -2;
-										//fall();
+										
                                 } else if
                                 (e.keyCode==39) {
                                         mx = 2;
@@ -246,17 +193,13 @@ ctx.fill();
                                    my = -1.5;
 							       time();
                                   }								   
-								/*else
-                                if (e.keyCode==40) {
-                                        mx = 0;
-                                        my = 2;
-                                }*/
+								
                         }
                     function call()
                     {
                          window.onkeydown = keydownControl;
                            setInterval(drawrec, 10);
-}						  
+                    }						  
                     
                             
 }
