@@ -1,0 +1,192 @@
+<html>
+<body>
+
+<canvas id="myCanvas" width="1000" height="500" style="border:1px solid #d3d3d3;"></canvas>
+<p id="demo"></p>
+<script>
+
+window.addEventListener("load", windowLoadHandler, false);
+
+function windowLoadHandler() {
+	canvasApp();
+}
+var x=20;
+var y=20;
+//var x1=20;
+var dx=2;
+var dr=2;
+var du=2;
+var x1 = 10;
+var x3=300;
+ var y1 = 220;
+ var x2=x1;
+ var mx = 0;
+ var my = 0;
+ var vx= 0,vy= 1;
+gravity = 0.2,	bounceFactor = 0.7;           
+ var i=10;           
+var a=[[800,220],[900,180],[1000,220],[1100,220],[1200,180],[1300,220]];
+//var a=[400,580,700,900];
+//var b=[220,180,220,220];
+ var j=0;
+ var k=0;
+ var speed=1;
+var tol=0;
+var w=1;
+
+
+
+ function canvasApp()
+ {
+ var c=document.getElementById("myCanvas");
+var ctx=c.getContext("2d");
+c.addEventListener("keydown", keydownControl, false);
+
+init();
+function init() {
+		
+		draw();
+		drawrect();
+		//run();
+		call();
+      
+	}
+	
+	function clearCanvas() {
+	ctx.clearRect(0, 0, c.width,c.height);
+	//drawScreen();
+	
+	
+	
+}
+	var h=0;
+
+function drawrect()
+{
+if(speed<2300)
+{
+  speed+=5;
+  for(i=0;i<6;i++)
+  {
+   
+    for(j=0;j<1;j++)
+	{
+	ctx.fillStyle = "yellow";
+  ctx.beginPath();
+  ctx.fillRect(a[i][j]-k,a[i][j+1],20,20);
+  ctx.closePath();
+  ctx.fill();
+ k=k+0.5;
+ 
+  }
+
+}
+}
+
+else
+{
+speed=1;
+k=-0.01;
+
+ }
+ 
+ }
+setInterval(drawrect,10);
+
+function draw()
+{
+ctx.beginPath();
+ctx.fillStyle="yellow";
+ctx.moveTo(0,250);
+ctx.lineTo(1000,250);
+ctx.lineWidth=15;
+ctx.stroke();
+
+ctx.beginPath();
+ctx.fillStyle="yellow";
+ctx.moveTo(0,100);
+ctx.lineTo(1000,100);
+ctx.lineWidth=10;
+ctx.stroke();
+
+ctx.fillStyle = "#ececec";
+ctx.beginPath();
+ctx.arc(x2, y1, 10, 0, 2*Math.PI, false);
+ctx.closePath();
+ctx.fill();
+//ctx.beginPath();
+}
+
+ 
+  function mess()
+  {
+   ctx.beginPath();
+   ctx.font="20px Georgia"; 
+   ctx.fillText("GAME OVER",400,300);
+   call();
+   c.removeEventListener('keydown', keydownControl);
+  }
+      
+                    
+                          
+                        function drawrec() {
+                          clearCanvas();
+                          draw();
+                         
+								if(y1+mx<100 || y1+mx>230)
+								mess();
+								
+								//x1 += mx;
+                                y1 += my;
+								
+                          
+                          
+                        }
+						function jump()
+						{
+						  clearCanvas();
+                          draw();
+						 x1+=mx;
+						 y1=y1+my;
+						 
+						 my += gravity;
+						 if(y1+my>220)
+						 {
+						 my=0;
+						 
+                          }
+						  }
+						  function time()
+						  {
+						  setInterval(jump,100);
+						  }
+                        function keydownControl(e) {
+                                
+                                if (e.keyCode==38) {
+                                        mx = 0;
+                                        my = -2;
+										
+                                } else if
+                                (e.keyCode==39) {
+                                        mx = 2;
+                                        my = 0;
+                                } 
+								else if(e.keyCode==32)
+								{
+								
+								  mx = 1;
+                                   my = -2;
+							       time();
+                                  }								   
+								
+                        }
+                    function call()
+                    {
+                         window.onkeydown = keydownControl;
+                           setInterval(drawrec, 10);
+                    }						  
+                    
+                            
+}
+</script>
+</html>
