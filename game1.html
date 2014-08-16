@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+<title>game</title>
+<meta charset="UTF-8">
+
+<script type="text/javascript">
+
+window.addEventListener("load", windowLoadHandler, false);
+
+function windowLoadHandler() {
+	canvasApp();
+}
+
+function canvasApp() {
+	
+	var angleMeasure = document.getElementById("angleMeasure");
+	var theCanvas = document.getElementById("my_canvas");
+	var collision = document.getElementById("collision");
+	var context = theCanvas.getContext("2d");
+	
+	var mouseX;
+	var mouseY;
+
+	var GRAVITY_CONSTANT = 9.81; // in metres per second squared
+	var INITIAL_VELOCITY = 100; // in metres per second
+	var TIME_QUANTUM = 0; // beginning of projection time
+	var TIME_QUANTUM_SQ = 0;
+	
+	var projectileX;
+	var projectileY;
+	var projectionAngle;
+	var x= 50	,y=30,radius= 10,	vx= 0,vy= 1;
+    gravity = 0.2,	bounceFactor = 0.7;
+	
+init();
+	
+	function init() {
+		
+		drawScreen();	
+        fall();
+		theCanvas.addEventListener("click", beginProjection, false);
+		theCanvas.addEventListener("mousemove", mouseMoveListener, false);
+
+	}
+	function clearCanvas() {
+	context.clearRect(0, 0, theCanvas.width,theCanvas.height);
+	drawScreen();
+	//mouseMoveListener();
+	
+}
+	function falldraw()
+	{
+		//console.log(x+" "+y);
+		context.fillStyle = "#ff0000";
+		context.beginPath();
+		context.arc(x, y, 10, 0, 2*Math.PI, false);
+		context.closePath();
+		context.fill();
+		//clearCanvas();
+	}
+
+	function fall(){
+	 
+	 
+		clearCanvas();
+		falldraw();
+		
+		// Now, lets make the ball move by adding the velocity vectors to its position
+		y += vy;
+		// Ohh! The ball is moving!
+		// Lets add some acceleration
+		vy += gravity;
+		//Perfect! Now, lets make it rebound when it touches the floor
+		if(y + radius > 705) {
+			// First, reposition the ball on top of the floor and then bounce it!
+			y = 705 - radius;
+			//vy *= -bounceFactor;
+			// The bounceFactor variable that we created decides the elasticity or how elastic the collision will be. If it's 1, then the collision will be perfectly elastic. If 0, then it will be inelastic.
+		}	   
+	}
+  
+	setInterval(fall, 1000/60);	 
+	 
+  
+	function beginProjection() {
+		
+		// launch projectile := compute position of ball and redraw canvas
+
+		// removing ball from the initial position
+		context.fillStyle = "#000";
+		context.beginPath();
+		context.arc(10, theCanvas.height-120, 10, 0, 2*Math.PI, false);
+		context.closePath();
+		context.fill();
+
+		// remove mouse move listener
+		theCanvas.removeEventListener("mousemove", mouseMoveListener, false);
+
+		// begin moving the projectile
+		moveProjectileEvent = setInterval(moveProjectile, 10);
+	}
+
+	function moveProjectile() {
+
+		// computing projectile path
+
+		// Sx = U*cos(angle)*t;
+		// Sy = U*sin(angle)*t - 0.5*g*t^2;
+		
+		projectileX =50+ ( INITIAL_VELOCITY * Math.cos(projectionAngle) * TIME_QUANTUM );
+		projectileY = 50+( INITIAL_VELOCITY * Math.sin(projectionAngle) * TIME_QUANTUM ) - ( 0.5 * GRAVITY_CONSTANT * TIME_QUANTUM_SQ );
+
+		TIME_QUANTUM = TIME_QUANTUM + 0.1;
+		TIME_QUANTUM_SQ = TIME_QUANTUM * TIME_QUANTUM;
+
+		drawShapes();
+		
+	}
+
+
+	function mouseDownListener(event) {
+
+
+	}
+	
+	function mouseUpListener(event) {
+
+		
+	}
+
+	function mouseMoveListener(event) {
+
+		// getting mouse position correctly 
+		var bRect = theCanvas.getBoundingClientRect();
+		mouseX = (event.clientX - bRect.left)*(theCanvas.width/bRect.width);
+		mouseY = (event.clientY - bRect.top)*(theCanvas.height/bRect.height);
+		
+		// setting bounds
+		if(mouseX < 0) mouseX = 0;
+		if(mouseX > theCanvas.width) mouseX = theCanvas.width;
+		if(mouseY < 0) mouseY = 0;
+		if(mouseY > theCanvas.height) mouseY = theCanvas.height;
+
+		// setup angle measure pointer
+		context.fillStyle = "#000";
+		context.fillRect(0,0,theCanvas.width,theCanvas.height);
+
+		context.fillStyle = "#ececec";
+		context.beginPath();
+		context.arc(800, 500, 20, 0, 2*Math.PI, false);
+		context.closePath();
+		context.fill();
+
+		context.beginPath();
+      	context.moveTo(50, theCanvas.height-70);
+      	context.lineTo(mouseX, mouseY);
+      	context.lineWidth = 3;
+		context.strokeStyle = '#123456';
+      	context.stroke();
+
+		// compute angle projected
+		projectionAngle = angleBetween2Lines(mouseX, mouseY);
+		angleMeasure.innerHTML = projectionAngle * (180/3.1427);
+
+	}
+
+	function angleBetween2Lines(mouseX, mouseY)
+    {
+        // line 1 := (0, canvas.height) -> (canvas.width, canvas.height)
+        // line 2 := (0, canvas.height) -> (mouseX, mouseY)
+        var pi = 3.1427;
+        var angle1 = Math.atan2(0, 0 - theCanvas.width);
+        var angle2 = Math.atan2(theCanvas.height - mouseY, 0 - mouseX);
+        return (angle1-angle2);
+    }
+
+    function targetHit() {
+
+    	// function to check if target hit
+    	var distance = findDistance(
+    		10+projectileX,
+    		theCanvas.height-10-projectileY,
+    		800,
+    		500);
+
+    	if(distance <= 30) return true;
+    	else return false;
+    }
+
+    function findDistance(x1,y1,x2,y2){
+    	var y = (y2-y1)*(y2-y1);
+    	var x = (x2-x1)*(x2-x1);
+    	return Math.sqrt(x+y);
+    }
+	
+	function drawShapes() {
+		
+		// empty background scene
+		context.fillStyle = "#000";
+		context.fillRect(0,0,theCanvas.width,theCanvas.height);
+		
+		// check if the projectile has hit target
+		if(targetHit()){
+			// context.fillStyle = "#9c9c9c";
+			// context.fillRect(0,0,theCanvas.width,theCanvas.height);
+			collision.innerHTML = "Target Hit! Great work... :D";
+			clearInterval(moveProjectileEvent);
+
+			context.fillStyle = "#000";
+			context.fillRect(0,0,theCanvas.width,theCanvas.height);
+
+			context.fillStyle = "#ececec";
+			context.beginPath();
+			context.arc(780, 480, 5, 0, 2*Math.PI, false);
+			context.closePath();
+			context.fill();
+
+			context.fillStyle = "#ececec";
+			context.beginPath();
+			context.arc(810, 505, 1, 0, 2*Math.PI, false);
+			context.closePath();
+			context.fill();
+
+			context.fillStyle = "#ececec";
+			context.beginPath();
+			context.arc(830, 500, 2, 0, 2*Math.PI, false);
+			context.closePath();
+			context.fill();
+
+			context.fillStyle = "#ececec";
+			context.beginPath();
+			context.arc(790, 520, 7, 0, 2*Math.PI, false);
+			context.closePath();
+			context.fill();
+
+			context.fillStyle = "#ececec";
+			context.beginPath();
+			context.arc(805, 540, 3, 0, 2*Math.PI, false);
+			context.closePath();
+			context.fill();
+
+		} else {
+		
+			// setup target to hit
+			context.fillStyle = "#ececec";
+			context.beginPath();
+			context.arc(800, 500, 20, 0, 2*Math.PI, false);
+			context.closePath();
+			context.fill();
+
+			context.fillStyle = "#ff0000";
+			context.beginPath();
+			context.arc(10+projectileX, theCanvas.height-10-projectileY, 10, 0, 2*Math.PI, false);
+			context.closePath();
+			context.fill();
+
+		}
+
+	}
+	
+	function drawScreen(mouseX, mouseY) {
+		
+		// setting up the background scene
+		context.fillStyle = "#000";
+		context.fillRect(0,0,theCanvas.width,theCanvas.height);
+
+		// draw starting ball
+		/*context.fillStyle = "#ff0000";
+		context.beginPath();
+		context.arc(50, theCanvas.height-50, 10, 0, 2*Math.PI, false);
+		context.closePath();
+		context.fill();*/
+
+		// setup target to hit
+		context.fillStyle = "#ececec";
+		context.beginPath();
+		context.arc(800, 500, 20, 0, 2*Math.PI, false);
+		context.closePath();
+		context.fill();
+			
+	}
+	
+}
+
+</script>
+
+</head>
+
+<body>
+	<div style="top: 50px; text-align:center">
+		<canvas id="my_canvas" width="1366" height="768"></canvas><br>
+		Angle of projection :- <span style="font-family:Helvetica;font-size:20px;" id="angleMeasure"></span><br>
+		<span style="font-family:Helvetica;font-size:30px;" id="collision"></span>
+	</div>
+</body>
+</html>		
+  				
